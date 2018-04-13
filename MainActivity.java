@@ -51,6 +51,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }*/
 
+    /*TO BE IMPLEMENTED:
+    switchToScreen(screen)
+    switchToMainScreen()?
+    How to start the game
+     */
+
 
     /*
      * API INTEGRATION SECTION. This section contains the code that integrates
@@ -691,4 +697,45 @@ public class MainActivity extends AppCompatActivity {
             updatePeerScoresDisplay();
         }
     }
+
+    //////// HOW TO SEND MESSAGES //////////
+
+    /* THIS IS WHERE WE NEED TO DECIDE HOW TO SEND MESSAGES! 
+     */
+
+
+    OnRealTimeMessageReceivedListener mOnRealTimeMessageReceivedListener = new OnRealTimeMessageReceivedListener() {
+        @Override
+        public void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
+            byte[] buf = realTimeMessage.getMessageData();
+            String sender = realTimeMessage.getSenderParticipantId();
+            Log.d(TAG, "Message received: " + (char) buf[0] + "/" + (int) buf[1]);
+
+            if (buf[0] == 'F' || buf[0] == 'U') {
+                // score update.
+                int existingScore = mParticipantScore.containsKey(sender) ?
+                        mParticipantScore.get(sender) : 0;
+                int thisScore = (int) buf[1];
+                if (thisScore > existingScore) {
+                    // this check is necessary because packets may arrive out of
+                    // order, so we
+                    // should only ever consider the highest score we received, as
+                    // we know in our
+                    // game there is no way to lose points. If there was a way to
+                    // lose points,
+                    // we'd have to add a "serial number" to the packet.
+                    mParticipantScore.put(sender, thisScore);
+                }
+
+                // update the scores on the screen
+                updatePeerScoresDisplay();
+
+                // if it's a final score, mark this participant as having finished
+                // the game
+                if ((char) buf[0] == 'F') {
+                    mFinishedParticipants.add(realTimeMessage.getSenderParticipantId());
+                }
+            }
+        }
+    };
 }
