@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
     String mIncomingInvitationId = null;
 
     // Message buffer for sending messages
-    byte[] mMsgBuf = new byte[2];
+    byte[] mMsgBuf = new byte[2]; //Change this to 6?
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
 
         // set up a click listener for everything we care about
+        //TODO this needs to be added to the xml file
         for (int id : CLICKABLES) {
             findViewById(id).setOnClickListener(this);
         }
@@ -147,8 +148,8 @@ public class MainActivity extends AppCompatActivity {
         Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(MIN_OPPONENTS,
                 MAX_OPPONENTS, 0);
         switchToScreen(R.id.screen_wait);
-        keepScreenOn();
-        resetGameVars();
+        keepScreenOn(); //TODO
+        resetGameVars(); //TODO
 
         mRoomConfig = RoomConfig.builder(mRoomUpdateCallback)
                 .setOnMessageReceivedListener(mOnRealTimeMessageReceivedListener)
@@ -200,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleException(Exception exception, String details) {
+        //Need to add these to the xml file
         int status = 0;
 
         if (exception instanceof ApiException) {
@@ -285,6 +287,7 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 // ready to start playing
                 Log.d(TAG, "Starting game (waiting room returned OK).");
+                //Start game needs to be fixed
                 startGame(true);
             } else if (resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                 // player indicated that they want to leave the room
